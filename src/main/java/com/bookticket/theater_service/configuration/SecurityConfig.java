@@ -28,6 +28,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/v1/shows/internal/**").hasRole("SERVICE_ACCOUNT")
                         .anyRequest().authenticated()
                 );
         http.addFilterBefore(headerAuthenticatorFilter(), UsernamePasswordAuthenticationFilter.class);
