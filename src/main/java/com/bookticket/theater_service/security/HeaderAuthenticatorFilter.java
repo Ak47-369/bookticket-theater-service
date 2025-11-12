@@ -27,14 +27,13 @@ public class HeaderAuthenticatorFilter  extends OncePerRequestFilter {
         if (id != null  && roles != null) {
             List<SimpleGrantedAuthority> authorities = Arrays.stream(roles.split(","))
                     .map(String::trim)
-                    .map(SimpleGrantedAuthority::new)
+                    .map(role ->new SimpleGrantedAuthority("ROLE_" + role))
                     .toList();
 
             // Create a new authentication object
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(id, null, authorities);
             SecurityContextHolder.getContext().setAuthentication(authentication);
-
-            log.info("HeaderAuthenticatorFilter - Authentication set successfully");
+            log.info("Successfully authenticated user {} with roles {}", id, authorities);
         } else {
             log.warn("HeaderAuthenticatorFilter - Missing headers. X-User-Id: {}, X-User-Roles: {}", id, roles);
         }
