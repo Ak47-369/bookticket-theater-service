@@ -4,6 +4,7 @@ package com.bookticket.theater_service.configuration;
 import com.bookticket.theater_service.security.HeaderAuthenticatorFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -28,6 +29,11 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/actuator/**").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/api/v1/shows/**").permitAll()
+                        .requestMatchers(HttpMethod.POST,"/api/v1/shows/**").hasAnyRole("ADMIN","THEATER_OWNER")
+                        .requestMatchers(HttpMethod.PUT,"/api/v1/shows/**").hasAnyRole("ADMIN", "THEATER_OWNER")
+                        .requestMatchers(HttpMethod.DELETE,"/api/v1/shows/**").hasAnyRole("ADMIN", "THEATER_OWNER")
                         .requestMatchers("/api/v1/shows/internal/**").hasRole("SERVICE_ACCOUNT")
                         .anyRequest().authenticated()
                 );
