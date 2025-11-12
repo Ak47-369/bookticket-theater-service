@@ -1,27 +1,34 @@
 package com.bookticket.theater_service.controller;
 
+import com.bookticket.theater_service.dto.CreateShowRequest;
+import com.bookticket.theater_service.dto.ShowResponse;
 import com.bookticket.theater_service.repository.ShowRepository;
+import com.bookticket.theater_service.service.ShowService;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/shows")
 public class ShowController {
-    private final ShowRepository showRepository;
+    private final ShowService showService;
 
-    public ShowController(ShowRepository showRepository) {
-        this.showRepository = showRepository;
+    public ShowController(ShowService showService) {
+        this.showService = showService;
+    }
+
+    @PostMapping
+    public ResponseEntity<ShowResponse> createShow(@Valid @RequestBody CreateShowRequest createShowRequest) {
+        return new ResponseEntity<>(showService.createShow(createShowRequest), HttpStatus.CREATED);
     }
 
     // Service to Service Call
     @GetMapping("/internal/movie-ids")
     public ResponseEntity<List<String>> getMovieIdsByCity(@RequestParam String city) {
         return ResponseEntity.ok(List.of("1", "2", "3"));
-//        return ResponseEntity.ok(showRepository.findDistinctMovieIdsByCity(city));
+//        return ResponseEntity.ok(showService.getMovieIdsByCity(city));
     }
 }
