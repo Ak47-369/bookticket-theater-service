@@ -31,14 +31,14 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // Internal service-to-service communication
                         .requestMatchers("/api/v1/shows/internal/**").hasRole("SERVICE_ACCOUNT")
+                        // Screens (sub-resource of Theaters)
+                        .requestMatchers(HttpMethod.POST, "/api/v1/theaters/*/screens").hasAnyRole("ADMIN", "THEATER_OWNER")
+                        .requestMatchers(HttpMethod.GET, "/api/v1/theaters/*/screens").permitAll() // Users should be able to see screens for a theater
                         // Theaters
                         .requestMatchers(HttpMethod.POST,"/api/v1/theaters/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PATCH,"/api/v1/theaters/**").hasAnyRole("ADMIN", "THEATER_OWNER")
                         .requestMatchers(HttpMethod.DELETE,"/api/v1/theaters/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET,"/api/v1/theaters/**").permitAll() // Users should be able to browse theaters
-                        // Screens (sub-resource of Theaters)
-                        .requestMatchers(HttpMethod.POST, "/api/v1/theaters/*/screens").hasAnyRole("ADMIN", "THEATER_OWNER")
-                        .requestMatchers(HttpMethod.GET, "/api/v1/theaters/*/screens").permitAll() // Users should be able to see screens for a theater
                         // Screens (direct resource access)
                         .requestMatchers(HttpMethod.PUT, "/api/v1/screens/**").hasAnyRole("ADMIN", "THEATER_OWNER")
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/screens/**").hasAnyRole("ADMIN", "THEATER_OWNER")
