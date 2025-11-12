@@ -29,12 +29,13 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/actuator/**").permitAll()
-                        .requestMatchers(HttpMethod.GET,"/api/v1/shows/**").permitAll()
+                        .requestMatchers("/api/v1/shows/internal/**").hasRole("SERVICE_ACCOUNT")
                         .requestMatchers(HttpMethod.POST,"/api/v1/shows/**").hasAnyRole("ADMIN","THEATER_OWNER")
                         .requestMatchers(HttpMethod.PUT,"/api/v1/shows/**").hasAnyRole("ADMIN", "THEATER_OWNER")
                         .requestMatchers(HttpMethod.DELETE,"/api/v1/shows/**").hasAnyRole("ADMIN", "THEATER_OWNER")
-                        .requestMatchers("/api/v1/shows/internal/**").hasRole("SERVICE_ACCOUNT")
+                        .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/actuator/**").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/api/v1/shows/**").permitAll()
                         .anyRequest().authenticated()
                 );
         http.addFilterBefore(headerAuthenticatorFilter(), UsernamePasswordAuthenticationFilter.class);
