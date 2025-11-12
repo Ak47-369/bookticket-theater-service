@@ -25,7 +25,6 @@ public class TheaterController {
        return new ResponseEntity<>(theaterService.createTheater(createTheaterRequest), HttpStatus.CREATED);
     }
 
-   // TO DO: Use PATCH , user is sending only the fields they want to update
     @PatchMapping("/{theaterId}")
     public ResponseEntity<TheaterResponse> updateTheaterById(@PathVariable Long theaterId, @Valid @RequestBody UpdateTheaterRequest updateTheaterRequest) {
         return new ResponseEntity<>(theaterService.updateTheater(theaterId, updateTheaterRequest), HttpStatus.OK);

@@ -49,7 +49,7 @@ public class ScreenController {
     /**
      * Updates a specific screen.
      */
-    @PutMapping("/screens/{screenId}")
+    @PatchMapping("/screens/{screenId}")
     public ResponseEntity<ScreenResponse> updateScreenById(@PathVariable Long screenId, @Valid @RequestBody UpdateScreenRequest updateScreenRequest) {
         return new ResponseEntity<>(screenService.updateScreen(screenId, updateScreenRequest), HttpStatus.OK);
     }

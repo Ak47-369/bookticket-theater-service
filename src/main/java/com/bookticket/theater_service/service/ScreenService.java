@@ -75,7 +75,7 @@ public class ScreenService {
             UpdateUtil.updateIfNotEmpty(updateScreenRequest.name(), screen::setName);
             UpdateUtil.updateIfPositive(updateScreenRequest.rows(), screen::setRows);
             UpdateUtil.updateIfPositive(updateScreenRequest.columns(), screen::setColumns);
-            UpdateUtil.updateIfNotEmpty(updateScreenRequest.screenType(), screen::setScreenType);
+            UpdateUtil.updateIfNotNull(updateScreenRequest.screenType(), screen::setScreenType);
             Screen updatedScreen = screenRepository.save(screen);
             log.info("Screen updated successfully {}", updatedScreen);
             return new ScreenResponse(updatedScreen.getId(),
