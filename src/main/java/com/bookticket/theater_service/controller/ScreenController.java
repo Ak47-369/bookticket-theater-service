@@ -26,17 +26,22 @@ public class ScreenController {
         return new ResponseEntity<>(screenService.createScreen(createScreenRequest), HttpStatus.CREATED);
     }
 
-    @GetMapping
+    @GetMapping("/{theaterId}")
     public ResponseEntity<List<ScreenResponse>> getScreensByTheaterId(@RequestParam Long theaterId) {
         return new ResponseEntity<>(screenService.getScreensByTheaterId(theaterId), HttpStatus.OK);
     }
 
-    @PutMapping
+    @GetMapping("/screen/{screenId}")
+    public ResponseEntity<ScreenResponse> getScreenById(@PathVariable Long screenId) {
+        return new ResponseEntity<>(screenService.getScreenById(screenId), HttpStatus.OK);
+    }
+
+    @PutMapping("/{screenId}")
     public ResponseEntity<ScreenResponse> updateScreenById(@PathVariable Long screenId, @Valid @RequestBody UpdateScreenRequest updateScreenRequest) {
         return new ResponseEntity<>(screenService.updateScreen(screenId, updateScreenRequest), HttpStatus.OK);
     }
 
-    @DeleteMapping
+    @DeleteMapping("/{screenId}")
     public ResponseEntity<Void> deleteScreenById(@PathVariable Long screenId) {
         screenService.deleteScreen(screenId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
