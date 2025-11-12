@@ -5,6 +5,7 @@ import com.bookticket.theater_service.dto.CreateTheaterRequest;
 import com.bookticket.theater_service.dto.TheaterResponse;
 import com.bookticket.theater_service.dto.UpdateTheaterRequest;
 import com.bookticket.theater_service.repository.TheaterRepository;
+import com.bookticket.theater_service.util.UpdateUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -52,12 +53,12 @@ public class TheaterService {
             Theater theater = theaterRepository.findById(theaterId)
                     .orElseThrow(() -> new RuntimeException("Theater not found"));
 
-            updateIfNotEmpty(updateTheaterrequest.name(), theater::setName);
-            updateIfNotEmpty(updateTheaterrequest.address(), theater::setAddress);
-            updateIfNotEmpty(updateTheaterrequest.city(), theater::setCity);
-            updateIfNotEmpty(updateTheaterrequest.state(), theater::setState);
-            updateIfNotEmpty(updateTheaterrequest.zip(), theater::setZip);
-            updateIfNotEmpty(updateTheaterrequest.landmark(), theater::setLandmark);
+            UpdateUtil.updateIfNotEmpty(updateTheaterrequest.name(), theater::setName);
+            UpdateUtil.updateIfNotEmpty(updateTheaterrequest.address(), theater::setAddress);
+            UpdateUtil.updateIfNotEmpty(updateTheaterrequest.city(), theater::setCity);
+            UpdateUtil.updateIfNotEmpty(updateTheaterrequest.state(), theater::setState);
+            UpdateUtil.updateIfNotEmpty(updateTheaterrequest.zip(), theater::setZip);
+            UpdateUtil.updateIfNotEmpty(updateTheaterrequest.landmark(), theater::setLandmark);
 
             Theater updatedTheater = theaterRepository.save(theater);
             log.info("Theater updated successfully {}", updatedTheater);
@@ -68,11 +69,4 @@ public class TheaterService {
             throw new RuntimeException(e);
         }
     }
-
-    private void updateIfNotEmpty(String value, java.util.function.Consumer<String> setter) {
-        if (value != null && !value.isEmpty()) {
-            setter.accept(value);
-        }
-    }
-
 }
