@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/theaters/screens")
+@RequestMapping("/api/v1")
 public class ScreenController {
 
     private final ScreenService screenService;
@@ -21,27 +21,43 @@ public class ScreenController {
         this.screenService = screenService;
     }
 
-    @PostMapping
+    /**
+     * Creates a new screen for a specific theater.
+     */
+    @PostMapping("/theaters/{theaterId}/screens")
     public ResponseEntity<ScreenResponse> createScreen(@Valid @RequestBody CreateScreenRequest createScreenRequest) {
         return new ResponseEntity<>(screenService.createScreen(createScreenRequest), HttpStatus.CREATED);
     }
 
-    @GetMapping("/{theaterId}")
-    public ResponseEntity<List<ScreenResponse>> getScreensByTheaterId(@RequestParam Long theaterId) {
+    /**
+     * Gets all screens belonging to a specific theater.
+     */
+    @GetMapping("/theaters/{theaterId}/screens")
+    public ResponseEntity<List<ScreenResponse>> getScreensByTheaterId(@PathVariable Long theaterId) {
         return new ResponseEntity<>(screenService.getScreensByTheaterId(theaterId), HttpStatus.OK);
     }
 
-    @GetMapping("/screen/{screenId}")
+    /**
+     * Gets a single screen by its unique ID.
+     * This endpoint is independent of the theater for direct access.
+     */
+    @GetMapping("/screens/{screenId}")
     public ResponseEntity<ScreenResponse> getScreenById(@PathVariable Long screenId) {
         return new ResponseEntity<>(screenService.getScreenById(screenId), HttpStatus.OK);
     }
 
-    @PutMapping("/{screenId}")
+    /**
+     * Updates a specific screen.
+     */
+    @PutMapping("/screens/{screenId}")
     public ResponseEntity<ScreenResponse> updateScreenById(@PathVariable Long screenId, @Valid @RequestBody UpdateScreenRequest updateScreenRequest) {
         return new ResponseEntity<>(screenService.updateScreen(screenId, updateScreenRequest), HttpStatus.OK);
     }
 
-    @DeleteMapping("/{screenId}")
+    /**
+     * Deletes a specific screen.
+     */
+    @DeleteMapping("/screens/{screenId}")
     public ResponseEntity<Void> deleteScreenById(@PathVariable Long screenId) {
         screenService.deleteScreen(screenId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

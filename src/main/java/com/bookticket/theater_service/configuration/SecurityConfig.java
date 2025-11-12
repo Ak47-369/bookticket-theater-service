@@ -29,20 +29,27 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        // Internal service-to-service communication
                         .requestMatchers("/api/v1/shows/internal/**").hasRole("SERVICE_ACCOUNT")
+                        // Theaters
+                        .requestMatchers(HttpMethod.POST,"/api/v1/theaters/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PATCH,"/api/v1/theaters/**").hasAnyRole("ADMIN", "THEATER_OWNER")
+                        .requestMatchers(HttpMethod.DELETE,"/api/v1/theaters/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET,"/api/v1/theaters/**").permitAll() // Users should be able to browse theaters
+                        // Screens (sub-resource of Theaters)
+                        .requestMatchers(HttpMethod.POST, "/api/v1/theaters/*/screens").hasAnyRole("ADMIN", "THEATER_OWNER")
+                        .requestMatchers(HttpMethod.GET, "/api/v1/theaters/*/screens").permitAll() // Users should be able to see screens for a theater
+                        // Screens (direct resource access)
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/screens/**").hasAnyRole("ADMIN", "THEATER_OWNER")
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/screens/**").hasAnyRole("ADMIN", "THEATER_OWNER")
+                        .requestMatchers(HttpMethod.GET, "/api/v1/screens/**").permitAll() // Users should be able to get screen details
+                        // Shows
                         .requestMatchers(HttpMethod.POST,"/api/v1/shows/**").hasAnyRole("ADMIN","THEATER_OWNER")
                         .requestMatchers(HttpMethod.PUT,"/api/v1/shows/**").hasAnyRole("ADMIN", "THEATER_OWNER")
                         .requestMatchers(HttpMethod.DELETE,"/api/v1/shows/**").hasAnyRole("ADMIN", "THEATER_OWNER")
-                        .requestMatchers(HttpMethod.POST,"/api/v1/theaters/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE,"/api/v1/theaters/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT,"/api/v1/theaters/**").hasAnyRole("ADMIN", "THEATER_OWNER")
-                        .requestMatchers(HttpMethod.GET,"/api/v1/theaters/**").hasAnyRole("ADMIN", "USER","THEATER_OWNER")
-                        .requestMatchers(HttpMethod.GET,"/api/v1/theaters/screens/**").hasAnyRole("ADMIN", "USER","THEATER_OWNER")
-                        .requestMatchers(HttpMethod.POST,"/api/v1/theaters/screens/**").hasAnyRole("ADMIN", "THEATER_OWNER")
-                        .requestMatchers(HttpMethod.PUT,"/api/v1/theaters/screens/**").hasAnyRole("ADMIN", "THEATER_OWNER")
-                        .requestMatchers(HttpMethod.DELETE,"/api/v1/theaters/screens/**").hasAnyRole("ADMIN", "THEATER_OWNER")
-                        .requestMatchers("/actuator/**").permitAll()
                         .requestMatchers(HttpMethod.GET,"/api/v1/shows/**").permitAll()
+                        // Actuator and any other authenticated requests
+                        .requestMatchers("/actuator/**").permitAll()
                         .anyRequest().authenticated()
                 );
         http.addFilterBefore(headerAuthenticatorFilter(), UsernamePasswordAuthenticationFilter.class);

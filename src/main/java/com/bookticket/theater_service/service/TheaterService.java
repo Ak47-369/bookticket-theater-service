@@ -9,6 +9,8 @@ import com.bookticket.theater_service.util.UpdateUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @Slf4j
 public class TheaterService {
@@ -68,5 +70,24 @@ public class TheaterService {
             log.error("Error updating theater", e);
             throw new RuntimeException(e);
         }
+    }
+
+    public List<TheaterResponse> getAllTheaters(String city) {
+        List<Theater> theaters = null;
+        try {
+            theaters = theaterRepository.findAll();
+            log.info("Theaters found {}", theaters);
+        } catch (Exception e) {
+            log.error("Error getting theaters", e);
+            throw new RuntimeException(e);
+        }
+        if(city != null) {
+            theaters = theaters.stream()
+                    .filter(theater -> theater.getCity().equals(city))
+                    .toList();
+        }
+        return theaters.stream()
+                .map(theater -> new TheaterResponse(theater.getId(), theater.getName(), theater.getAddress()))
+                .toList();
     }
 }
