@@ -92,16 +92,24 @@ public class ShowService {
 
         log.info("Show created successfully");
         return new ShowResponse(
+                newShow.getId(),
                 newShow.getStartTime(),
                 newShow.getEndTime(),
                 newShow.getMovieId(),
                 newShow.getMovieTitle(),
-                newShow.getMovieBannerUrl()
+                newShow.getMovieBannerUrl(),
+                newShow.getScreen().getTheater().getName(),
+                newShow.getScreen().getTheater().getAddress(),
+                newShow.getScreen().getName()
         );
 
     }
 
     public List<String> getMovieIdsByCity(String city) {
         return showRepository.findDistinctMovieIdsByCity(city);
+    }
+
+    public List<ShowResponse> getShowsByMovieAndCityAndDate(String movieId, String city, java.time.LocalDate date) {
+        return showRepository.findShowsByMovieAndCityAndDate(movieId, city, date);
     }
 }
