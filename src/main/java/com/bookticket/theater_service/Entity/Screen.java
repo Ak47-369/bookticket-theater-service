@@ -15,7 +15,6 @@ public class Screen extends Auditable {
     @Column(name = "screen_id")
     private Long id;
     private String name;
-    private int capacity;
     private int rows;
     private int columns;
     @Enumerated(EnumType.STRING)
@@ -23,4 +22,8 @@ public class Screen extends Auditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "theater_id", nullable = false)
     private Theater theater;
+
+    public int getTotalSeats() {
+        return rows * columns;
+    }
 }
