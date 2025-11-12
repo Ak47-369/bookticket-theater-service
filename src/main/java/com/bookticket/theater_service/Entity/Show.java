@@ -1,15 +1,13 @@
 package com.bookticket.theater_service.Entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "shows")
-@Getter
-@Setter
+@Data
 public class Show extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
