@@ -8,6 +8,10 @@ import lombok.Data;
 @Table(name = "show_seats")
 @Data
 public class ShowSeat extends Auditable{
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "show_seat_id")
+    Long id;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "show_id", nullable = false)
     private Show show;

@@ -17,7 +17,7 @@ public interface ShowRepository extends JpaRepository<Show,Long> {
     List<String> findDistinctMovieIdsByCity(@Param("city") String city);
 
     @Query("SELECT new com.bookticket.theater_service.dto.ShowResponse(" +
-            "s.id, s.startTime, s.endTime, " +
+            "s.id, s.startTime, s.endTime, s.movieId, " +
             "s.movieTitle, s.movieBannerUrl, " +
             "t.name, t.address, sc.name) " +
             "FROM Show s " +
@@ -25,7 +25,7 @@ public interface ShowRepository extends JpaRepository<Show,Long> {
             "JOIN sc.theater t " +
             "WHERE s.movieId = :movieId " +
             "AND t.city = :city " +
-            "AND CAST(s.startTime AS java.time.LocalDate) = :date")
+            "AND DATE(s.startTime) = :date")
     List<ShowResponse> findShowsByMovieAndCityAndDate(
             @Param("movieId") String movieId,
             @Param("city") String city,

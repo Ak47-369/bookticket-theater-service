@@ -8,6 +8,7 @@ import com.bookticket.theater_service.Entity.ShowSeat;
 import com.bookticket.theater_service.dto.CreateShowRequest;
 import com.bookticket.theater_service.dto.MovieResponse;
 import com.bookticket.theater_service.dto.ShowResponse;
+import com.bookticket.theater_service.dto.ShowSeatResponse;
 import com.bookticket.theater_service.enums.ShowSeatStatus;
 import com.bookticket.theater_service.repository.ScreenRepository;
 import com.bookticket.theater_service.repository.SeatRepository;
@@ -111,5 +112,9 @@ public class ShowService {
 
     public List<ShowResponse> getShowsByMovieAndCityAndDate(String movieId, String city, java.time.LocalDate date) {
         return showRepository.findShowsByMovieAndCityAndDate(movieId, city, date);
+    }
+
+    public List<ShowSeatResponse> getShowSeatsByShowId(Long showId) {
+        return showSeatRepository.findShowSeatsByShowId(showId);
     }
 }

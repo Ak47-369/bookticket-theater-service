@@ -2,6 +2,7 @@ package com.bookticket.theater_service.controller;
 
 import com.bookticket.theater_service.dto.CreateShowRequest;
 import com.bookticket.theater_service.dto.ShowResponse;
+import com.bookticket.theater_service.dto.ShowSeatResponse;
 import com.bookticket.theater_service.repository.ShowRepository;
 import com.bookticket.theater_service.service.ShowService;
 import jakarta.validation.Valid;
@@ -41,5 +42,15 @@ public class ShowController {
     public ResponseEntity<List<String>> getMovieIdsByCity(@RequestParam String city) {
         return ResponseEntity.ok(List.of("1", "2", "3"));
 //        return ResponseEntity.ok(showService.getMovieIdsByCity(city));
+    }
+
+    // Get Complete Seat Map (Layout and Availability)
+    @GetMapping("/{showId}/seats")
+    public ResponseEntity<List<ShowSeatResponse>> getShowSeats(@PathVariable Long showId) {
+        List<ShowSeatResponse> showSeatResponses = showService.getShowSeatsByShowId(showId);
+        if(showSeatResponses.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(showService.getShowSeatsByShowId(showId));
     }
 }

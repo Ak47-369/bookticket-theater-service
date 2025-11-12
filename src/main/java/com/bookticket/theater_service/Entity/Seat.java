@@ -7,7 +7,7 @@ import lombok.Setter;
 
 @Entity
 @Table(name = "seats", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"row", "column", "screen_id"})
+        @UniqueConstraint(columnNames = {"seat_row", "seat_column", "screen_id"})
 })
 @Getter
 @Setter
@@ -16,9 +16,9 @@ public class Seat extends Auditable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "seat_id")
     private Long id;
-    @Column(nullable = false)
+    @Column(name = "seat_row", nullable = false)
     private int row;
-    @Column(nullable = false)
+    @Column(name = "seat_column", nullable = false)
     private int column;
     @Enumerated(EnumType.STRING)
     private SeatType seatType;
