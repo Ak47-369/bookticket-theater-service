@@ -46,7 +46,7 @@ public class TheaterService {
     }
 
     public void deleteTheater(Long theaterId) {
-        // TO DO : Check if not exists - throws ResouceNotFound Exception, use GlobalExaception Handler
+        // TODO : Check if not exists - throws ResouceNotFound Exception, use GlobalExaception Handler
         theaterRepository.deleteById(theaterId);
     }
 

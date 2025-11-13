@@ -39,6 +39,12 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PATCH,"/api/v1/theaters/**").hasAnyRole("ADMIN", "THEATER_OWNER")
                         .requestMatchers(HttpMethod.DELETE,"/api/v1/theaters/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET,"/api/v1/theaters/**").permitAll() // Users should be able to browse theaters
+                        // Seats Sub Resource of Screen
+                        .requestMatchers(HttpMethod.POST, "/api/v1/screens/*/seats/**").hasAnyRole("ADMIN", "THEATER_OWNER")
+                        .requestMatchers(HttpMethod.PATCH,"/api/v1/screens/*/seats/**").hasAnyRole("ADMIN", "THEATER_OWNER")
+                        .requestMatchers(HttpMethod.PUT,"/api/v1/screens/*/seats/**").hasAnyRole("ADMIN", "THEATER_OWNER")
+                        .requestMatchers(HttpMethod.DELETE,"/api/v1/screens/*/seats/**").hasAnyRole("ADMIN", "THEATER_OWNER")
+                        .requestMatchers(HttpMethod.GET,"/api/v1/screens/*/seats/**").permitAll()
                         // Screens (direct resource access)
                         .requestMatchers(HttpMethod.PATCH, "/api/v1/screens/**").hasAnyRole("ADMIN", "THEATER_OWNER")
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/screens/**").hasAnyRole("ADMIN", "THEATER_OWNER")

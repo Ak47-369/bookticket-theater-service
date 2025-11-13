@@ -44,7 +44,7 @@ public class ShowService {
         Screen screen = screenRepository.findById(createShowRequest.screenId())
                 .orElseThrow(() -> new RuntimeException("Screen not found"));
         log.info("Screen found: {}", screen);
-        // TO DO : Make it Async, This is a sync service call
+        // TODO : Make it Async, This is a sync service call
         MovieResponse movieResponse = movieRestClient.get()
                 .uri("/api/v1/movies/{movieId}", createShowRequest.movieId())
                 .retrieve()

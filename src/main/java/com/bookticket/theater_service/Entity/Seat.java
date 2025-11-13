@@ -26,4 +26,8 @@ public class Seat extends Auditable {
     @JoinColumn(name = "screen_id", nullable = false)
     private Screen screen;
     private double price; // Base price
+
+    public String getSeatNumber() {
+        return row + "-" + column;
+    }
 }
