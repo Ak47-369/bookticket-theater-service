@@ -10,9 +10,8 @@ import java.util.List;
 
 public interface ShowSeatRepository extends JpaRepository<ShowSeat,Long> {
     // Get Seat Map API
-//    List<ShowSeat> findByShowId(Long showId);
     @Query("SELECT new com.bookticket.theater_service.dto.ShowSeatResponse(" +
-            "ss.id, CONCAT(s.row, s.column), s.seatType, ss.price, ss.status) " +
+            "ss.id, s.row || '-' || s.column, s.seatType, ss.price, ss.status) " +
             "FROM ShowSeat ss " +
             "JOIN ss.seat s " +
             "WHERE ss.show.id = :showId " +

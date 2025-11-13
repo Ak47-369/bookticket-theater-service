@@ -11,8 +11,6 @@ public record CreateShowRequest(
         @NotNull @Future
         LocalDateTime endTime,
         @NotNull
-        String movieId,
-        @NotNull
-        Long screenId
+        String movieId
 ) {
 }

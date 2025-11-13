@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface ShowRepository extends JpaRepository<Show,Long> {
@@ -23,13 +24,24 @@ public interface ShowRepository extends JpaRepository<Show,Long> {
             "FROM Show s " +
             "JOIN s.screen sc " +
             "JOIN sc.theater t " +
-            "WHERE s.movieId = :movieId " +
-            "AND t.city = :city " +
-            "AND DATE(s.startTime) = :date")
-    List<ShowResponse> findShowsByMovieAndCityAndDate(
-            @Param("movieId") String movieId,
+            "WHERE (:city IS NULL OR t.city = :city) " +
+            "AND (:theaterId IS NULL OR t.id = :theaterId) " +
+            "AND (:movieId IS NULL OR s.movieId = :movieId) " +
+            "AND s.startTime >= :startOfDay " +
+            "AND s.startTime < :endOfDay")
+    List<ShowResponse> findShowsByFilters(
             @Param("city") String city,
-            @Param("date") java.time.LocalDate date
+            @Param("theaterId") Long theaterId,
+            @Param("movieId") String movieId,
+            @Param("startOfDay") LocalDateTime startOfDay,
+            @Param("endOfDay") LocalDateTime endOfDay
     );
+    
+
+    @Query("SELECT s FROM Show s WHERE s.id = :showId")
+    Show findShowById(@Param("showId") Long showId);
+
+    @Query("SELECT s FROM Show s WHERE s.screen.id = :screenId")
+    List<Show> findShowsByScreenId(@Param("screenId") Long screenId);
 
 }

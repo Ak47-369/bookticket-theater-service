@@ -23,25 +23,51 @@ public class ShowController {
         this.showService = showService;
     }
 
-    @PostMapping
-    public ResponseEntity<ShowResponse> createShow(@Valid @RequestBody CreateShowRequest createShowRequest) {
-        return new ResponseEntity<>(showService.createShow(createShowRequest), HttpStatus.CREATED);
+    @PostMapping("/screens/{screenId}")
+    public ResponseEntity<ShowResponse> createShow(@PathVariable Long screenId,@Valid @RequestBody CreateShowRequest createShowRequest) {
+        return new ResponseEntity<>(showService.createShow(screenId, createShowRequest), HttpStatus.CREATED);
     }
 
-    // Finds all shows for a given movie, city and date
-    // UserFacing
+    /**
+     * Finds shows with flexible filtering options
+     * Supports combinations of: city, theaterId, movieId, date
+     *
+     * Examples:
+     * - GET /api/v1/shows?city=Mumbai
+     * - GET /api/v1/shows?city=Mumbai&date=2025-11-15
+     * - GET /api/v1/shows?theaterId=5
+     * - GET /api/v1/shows?theaterId=5&date=2025-11-15
+     * - GET /api/v1/shows?city=Mumbai&movieId=movie123
+     * - GET /api/v1/shows?city=Mumbai&movieId=movie123&date=2025-11-15
+     *
+     * Date filter: If not provided, returns shows for next 15 days
+     */
     @GetMapping
-    public ResponseEntity<List<ShowResponse>> getShows(@RequestParam String movieId, @RequestParam String city,
-                                                       @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
-    List<ShowResponse> showResponses = showService.getShowsByMovieAndCityAndDate(movieId, city, date);
+    public ResponseEntity<List<ShowResponse>> getShows(
+            @RequestParam(required = false) String city,
+            @RequestParam(required = false) Long theaterId,
+            @RequestParam(required = false) String movieId,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+
+        List<ShowResponse> showResponses = showService.getShowsByFilters(city, theaterId, movieId, date);
         return ResponseEntity.ok(showResponses);
     }
 
     // Service to Service Call
     @GetMapping("/internal/movie-ids")
     public ResponseEntity<List<String>> getMovieIdsByCity(@RequestParam String city) {
-        return ResponseEntity.ok(List.of("1", "2", "3"));
-//        return ResponseEntity.ok(showService.getMovieIdsByCity(city));
+//        return ResponseEntity.ok(List.of("1", "2", "3"));
+        return ResponseEntity.ok(showService.getMovieIdsByCity(city));
+    }
+
+    @GetMapping("/screens/{screenId}")
+    public ResponseEntity<List<ShowResponse>> getShowsByScreenId(@PathVariable Long screenId) {
+        return ResponseEntity.ok(showService.getShowsByScreenId(screenId));
+    }
+
+    @GetMapping("/{showId}")
+    public ResponseEntity<ShowResponse> getShowById(@PathVariable Long showId) {
+        return ResponseEntity.ok(showService.getShowById(showId));
     }
 
     // Get Complete Seat Map (Layout and Availability)
