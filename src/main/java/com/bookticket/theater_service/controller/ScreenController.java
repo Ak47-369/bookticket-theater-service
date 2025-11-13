@@ -25,8 +25,8 @@ public class ScreenController {
      * Creates a new screen for a specific theater.
      */
     @PostMapping("/theaters/{theaterId}/screens")
-    public ResponseEntity<ScreenResponse> createScreen(@Valid @RequestBody CreateScreenRequest createScreenRequest) {
-        return new ResponseEntity<>(screenService.createScreen(createScreenRequest), HttpStatus.CREATED);
+    public ResponseEntity<ScreenResponse> createScreen(@PathVariable Long theaterId,@Valid @RequestBody CreateScreenRequest createScreenRequest) {
+        return new ResponseEntity<>(screenService.createScreen(theaterId, createScreenRequest), HttpStatus.CREATED);
     }
 
     /**

@@ -21,14 +21,14 @@ public class ScreenService {
         this.screenRepository = screenRepository;
     }
 
-    public ScreenResponse createScreen(CreateScreenRequest createScreenRequest) {
+    public ScreenResponse createScreen(Long theaterId,CreateScreenRequest createScreenRequest) {
         try{
             Screen newScreen = new Screen();
             newScreen.setName(createScreenRequest.name());
             newScreen.setRows(createScreenRequest.rows());
             newScreen.setColumns(createScreenRequest.columns());
             newScreen.setTheater(new Theater());
-            newScreen.getTheater().setId(createScreenRequest.theaterId());
+            newScreen.getTheater().setId(theaterId);
             newScreen.setScreenType(createScreenRequest.screenType());
             Screen createdScreen = screenRepository.save(newScreen);
             log.info("Screen created successfully {}", createdScreen);
