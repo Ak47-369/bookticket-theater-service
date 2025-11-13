@@ -40,12 +40,12 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE,"/api/v1/theaters/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET,"/api/v1/theaters/**").permitAll() // Users should be able to browse theaters
                         // Screens (direct resource access)
-                        .requestMatchers(HttpMethod.PUT, "/api/v1/screens/**").hasAnyRole("ADMIN", "THEATER_OWNER")
+                        .requestMatchers(HttpMethod.PATCH, "/api/v1/screens/**").hasAnyRole("ADMIN", "THEATER_OWNER")
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/screens/**").hasAnyRole("ADMIN", "THEATER_OWNER")
                         .requestMatchers(HttpMethod.GET, "/api/v1/screens/**").permitAll() // Users should be able to get screen details
                         // Shows
                         .requestMatchers(HttpMethod.POST,"/api/v1/shows/**").hasAnyRole("ADMIN","THEATER_OWNER")
-                        .requestMatchers(HttpMethod.PUT,"/api/v1/shows/**").hasAnyRole("ADMIN", "THEATER_OWNER")
+                        .requestMatchers(HttpMethod.PATCH,"/api/v1/shows/**").hasAnyRole("ADMIN", "THEATER_OWNER")
                         .requestMatchers(HttpMethod.DELETE,"/api/v1/shows/**").hasAnyRole("ADMIN", "THEATER_OWNER")
                         .requestMatchers(HttpMethod.GET,"/api/v1/shows/**").permitAll()
                         // Actuator and any other authenticated requests
