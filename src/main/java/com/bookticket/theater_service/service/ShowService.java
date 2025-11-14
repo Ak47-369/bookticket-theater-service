@@ -33,7 +33,8 @@ public class ShowService {
     private final ShowSeatRepository showSeatRepository;
     private final SeatRepository seatRepository;
 
-    public ShowService(ShowRepository showRepository, ScreenRepository screenRepository, RestClient movieRestClient, ShowSeatRepository showSeatRepository, SeatRepository seatRepository) {
+    public ShowService(ShowRepository showRepository, ScreenRepository screenRepository, RestClient movieRestClient,
+                       ShowSeatRepository showSeatRepository, SeatRepository seatRepository) {
         this.showRepository = showRepository;
         this.screenRepository = screenRepository;
         this.movieRestClient = movieRestClient;
@@ -46,7 +47,7 @@ public class ShowService {
         Screen screen = screenRepository.findById(screenId)
                 .orElseThrow(() -> new RuntimeException("Screen not found"));
         log.info("Screen found: {}", screen);
-        // TODO : Make it Async, This is a sync service call
+        // TODO : Make it Async, This is a sync service call, Should i use .block() ?
         MovieResponse movieResponse = movieRestClient.get()
                 .uri("/api/v1/movies/{movieId}", createShowRequest.movieId())
                 .retrieve()

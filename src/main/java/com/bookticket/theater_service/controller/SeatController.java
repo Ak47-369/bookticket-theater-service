@@ -2,8 +2,11 @@ package com.bookticket.theater_service.controller;
 
 import com.bookticket.theater_service.dto.CreateSeatTemplateRequest;
 import com.bookticket.theater_service.dto.SeatTemplateResponse;
+import com.bookticket.theater_service.dto.ValidSeatResponse;
+import com.bookticket.theater_service.dto.VerfiySeatRequest;
 import com.bookticket.theater_service.service.SeatService;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +15,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1")
+@Slf4j
 public class SeatController {
     private final SeatService seatService;
 
@@ -28,6 +32,19 @@ public class SeatController {
     @GetMapping("/screens/{screenId}/seats")
     public ResponseEntity<List<SeatTemplateResponse>> getSeatTemplateByScreenId(@PathVariable Long screenId) {
         return new ResponseEntity<>(seatService.getSeatTemplateByScreenId(screenId), HttpStatus.OK);
+    }
+
+    @PostMapping("/shows/internal/seats/verify")
+    public ResponseEntity<List<ValidSeatResponse>> verifySeats(@Valid @RequestBody VerfiySeatRequest verifySeatRequest) {
+        List<ValidSeatResponse> validSeatResponses = seatService.getSeatByShowAndSeatIds(verifySeatRequest);
+        if(validSeatResponses.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        log.info("Validated {} seats", validSeatResponses.toString());
+        if(validSeatResponses.size() != verifySeatRequest.seatIds().size()) {
+            return new ResponseEntity<>(validSeatResponses,HttpStatus.PARTIAL_CONTENT);
+        }
+        return new ResponseEntity<>(validSeatResponses, HttpStatus.OK);
     }
 
     @PatchMapping("/screens/{screenId}/seats/{seatId}/price")

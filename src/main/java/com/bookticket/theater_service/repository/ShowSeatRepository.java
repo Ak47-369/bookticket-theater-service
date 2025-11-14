@@ -17,4 +17,9 @@ public interface ShowSeatRepository extends JpaRepository<ShowSeat,Long> {
             "WHERE ss.show.id = :showId " +
             "ORDER BY s.row, s.column") // Order by row and then column
     List<ShowSeatResponse> findShowSeatsByShowId(@Param("showId") Long showId);
+
+    @Query("SELECT ss FROM ShowSeat ss WHERE ss.show.id = :showId AND ss.id IN :showSeatIds")
+    List<ShowSeat> findByShowIdAndShowSeatIds(@Param("showId") Long showId,
+                                              @Param("showSeatIds") List<Long> showSeatIds
+    );
 }

@@ -2,12 +2,13 @@ package com.bookticket.theater_service.service;
 
 import com.bookticket.theater_service.Entity.Screen;
 import com.bookticket.theater_service.Entity.Seat;
-import com.bookticket.theater_service.dto.CreateSeatTemplateRequest;
-import com.bookticket.theater_service.dto.SeatResponse;
-import com.bookticket.theater_service.dto.SeatTemplateResponse;
+import com.bookticket.theater_service.Entity.ShowSeat;
+import com.bookticket.theater_service.dto.*;
 import com.bookticket.theater_service.enums.SeatType;
+import com.bookticket.theater_service.enums.ShowSeatStatus;
 import com.bookticket.theater_service.repository.ScreenRepository;
 import com.bookticket.theater_service.repository.SeatRepository;
+import com.bookticket.theater_service.repository.ShowSeatRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,15 +16,19 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static java.util.Arrays.stream;
+
 @Service
 @Slf4j
 public class SeatService {
     private final SeatRepository seatRepository;
     private final ScreenRepository screenRepository;
+    private final ShowSeatRepository showSeatRepository;
 
-    public SeatService(SeatRepository seatRepository, ScreenRepository screenRepository) {
+    public SeatService(SeatRepository seatRepository, ScreenRepository screenRepository, ShowSeatRepository showSeatRepository) {
         this.seatRepository = seatRepository;
         this.screenRepository = screenRepository;
+        this.showSeatRepository = showSeatRepository;
     }
 
     public SeatResponse getSeatById(Long seatId) {
@@ -35,6 +40,32 @@ public class SeatService {
     public List<SeatTemplateResponse> getSeatTemplateByScreenId(Long screenId) {
         return seatRepository.findByScreenId(screenId).stream()
                 .map(seat -> new SeatTemplateResponse(seat.getSeatNumber(), seat.getSeatType().name(), seat.getPrice()))
+                .toList();
+    }
+
+    public List<ValidSeatResponse> getSeatByShowAndSeatIds(VerfiySeatRequest verifySeatRequest) {
+        log.info("Verifying seats for show id: {} and seat ids: {}",
+                verifySeatRequest.showId(),
+                verifySeatRequest.seatIds()
+        );
+
+        List<ShowSeat>showSeats = showSeatRepository.findByShowIdAndShowSeatIds(
+                verifySeatRequest.showId(),
+                verifySeatRequest.seatIds()
+        );
+        log.info("Found {} seats", showSeats.size());
+        if(showSeats.size() != verifySeatRequest.seatIds().size()) {
+            log.warn("Requested {} seats, but found only {} seats", verifySeatRequest.seatIds().size(), showSeats.size());
+        }
+        return showSeats.stream()
+                .map(showSeat -> new ValidSeatResponse(
+                        showSeat.getId(),
+                        showSeat.getStatus() == ShowSeatStatus.AVAILABLE,
+                        showSeat.getSeat().getSeatNumber(),
+                        showSeat.getSeat().getSeatType().name(),
+                        showSeat.getPrice()
+                        )
+                )
                 .toList();
     }
 
