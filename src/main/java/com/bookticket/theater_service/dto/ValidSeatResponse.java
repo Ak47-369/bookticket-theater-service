@@ -2,7 +2,7 @@ package com.bookticket.theater_service.dto;
 
 public record ValidSeatResponse(
         Long seatId,
-        Boolean isAvailable,
+        String seatStatus,
         String seatNumber,
         String seatType,
         Double seatPrice

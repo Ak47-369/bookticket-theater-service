@@ -60,7 +60,7 @@ public class SeatService {
         return showSeats.stream()
                 .map(showSeat -> new ValidSeatResponse(
                         showSeat.getId(),
-                        showSeat.getStatus() == ShowSeatStatus.AVAILABLE,
+                        showSeat.getStatus().name(),
                         showSeat.getSeat().getSeatNumber(),
                         showSeat.getSeat().getSeatType().name(),
                         showSeat.getPrice()
@@ -197,5 +197,26 @@ public class SeatService {
         return savedSeats.stream()
                 .map(seat -> new SeatTemplateResponse(seat.getSeatNumber(), seat.getSeatType().name(), seat.getPrice()))
                 .toList();
+    }
+
+    @Transactional
+    public List<ValidSeatResponse> lockSeatsByShowAndSeatIds(LockSeatsRequest lockSeatsRequest) {
+        List<ShowSeat> showSeats = showSeatRepository.findByShowIdAndShowSeatIds(
+                lockSeatsRequest.showId(),
+                lockSeatsRequest.seatIds()
+        );
+
+    }
+
+    @Transactional
+    public List<ValidSeatResponse> bookSeatsByShowAndSeatIds(BookSeatsRequest bookSeatsRequest) {
+        // TODO : Implement
+        return null;
+    }
+
+    @Transactional
+    public List<ValidSeatResponse> releaseSeatsByShowAndSeatIds(ReleaseSeatsRequest releaseSeatsRequest) {
+        // TODO : Implement
+        return null;
     }
 }
