@@ -1,9 +1,6 @@
 package com.bookticket.theater_service.controller;
 
-import com.bookticket.theater_service.dto.CreateSeatTemplateRequest;
-import com.bookticket.theater_service.dto.SeatTemplateResponse;
-import com.bookticket.theater_service.dto.ValidSeatResponse;
-import com.bookticket.theater_service.dto.VerfiySeatRequest;
+import com.bookticket.theater_service.dto.*;
 import com.bookticket.theater_service.service.SeatService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -36,7 +33,7 @@ public class SeatController {
 
     @PostMapping("/shows/internal/seats/verify")
     public ResponseEntity<List<ValidSeatResponse>> verifySeats(@Valid @RequestBody VerfiySeatRequest verifySeatRequest) {
-        List<ValidSeatResponse> validSeatResponses = seatService.getSeatByShowAndSeatIds(verifySeatRequest);
+        List<ValidSeatResponse> validSeatResponses = seatService.getSeatByShowAndSeatIds(verifySeatRequest.showId(), verifySeatRequest.seatIds());
         if(validSeatResponses.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
@@ -45,6 +42,21 @@ public class SeatController {
             return new ResponseEntity<>(validSeatResponses,HttpStatus.PARTIAL_CONTENT);
         }
         return new ResponseEntity<>(validSeatResponses, HttpStatus.OK);
+    }
+
+    @PostMapping("/shows/internal/seats/lock")
+    public ResponseEntity<List<ValidSeatResponse>> lockSeats(@Valid @RequestBody LockSeatsRequest lockSeatsRequest) {
+        return new ResponseEntity<>(seatService.lockSeatsByShowAndSeatIds(lockSeatsRequest), HttpStatus.OK);
+    }
+
+    @PostMapping("/shows/internal/seats/release")
+    public ResponseEntity<List<ValidSeatResponse>> releaseSeats(@Valid @RequestBody ReleaseSeatsRequest releaseSeatsRequest) {
+        return new ResponseEntity<>(seatService.releaseSeatsByShowAndSeatIds(releaseSeatsRequest), HttpStatus.OK);
+    }
+
+    @PostMapping("/shows/internal/seats/book")
+    public ResponseEntity<List<ValidSeatResponse>> bookSeats(@Valid @RequestBody BookSeatsRequest bookSeatsRequest) {
+        return new ResponseEntity<>(seatService.bookSeatsByShowAndSeatIds(bookSeatsRequest), HttpStatus.OK);
     }
 
     @PatchMapping("/screens/{screenId}/seats/{seatId}/price")

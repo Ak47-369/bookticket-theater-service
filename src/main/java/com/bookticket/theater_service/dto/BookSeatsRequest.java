@@ -1,4 +1,9 @@
 package com.bookticket.theater_service.dto;
 
-public record BookSeatsRequest() {
+import java.util.List;
+
+public record BookSeatsRequest(
+        Long showId,
+        List<Long> seatIds
+) {
 }

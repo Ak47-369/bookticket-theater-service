@@ -43,19 +43,12 @@ public class SeatService {
                 .toList();
     }
 
-    public List<ValidSeatResponse> getSeatByShowAndSeatIds(VerfiySeatRequest verifySeatRequest) {
-        log.info("Verifying seats for show id: {} and seat ids: {}",
-                verifySeatRequest.showId(),
-                verifySeatRequest.seatIds()
-        );
-
-        List<ShowSeat>showSeats = showSeatRepository.findByShowIdAndShowSeatIds(
-                verifySeatRequest.showId(),
-                verifySeatRequest.seatIds()
-        );
+    public List<ValidSeatResponse> getSeatByShowAndSeatIds(Long showId, List<Long> seatIds) {
+        log.info("Verifying seats for show id: {} and seat ids: {}",showId, seatIds);
+        List<ShowSeat>showSeats = showSeatRepository.findByShowIdAndShowSeatIds(showId, seatIds);
         log.info("Found {} seats", showSeats.size());
-        if(showSeats.size() != verifySeatRequest.seatIds().size()) {
-            log.warn("Requested {} seats, but found only {} seats", verifySeatRequest.seatIds().size(), showSeats.size());
+        if(showSeats.size() != seatIds.size()) {
+            log.warn("Requested {} seats, but found only {} seats", seatIds.size(), showSeats.size());
         }
         return showSeats.stream()
                 .map(showSeat -> new ValidSeatResponse(
@@ -201,22 +194,77 @@ public class SeatService {
 
     @Transactional
     public List<ValidSeatResponse> lockSeatsByShowAndSeatIds(LockSeatsRequest lockSeatsRequest) {
-        List<ShowSeat> showSeats = showSeatRepository.findByShowIdAndShowSeatIds(
+       log.info("Locking seats for show id: {} and seat ids: {}",
                 lockSeatsRequest.showId(),
                 lockSeatsRequest.seatIds()
         );
 
+       int updatedCount = showSeatRepository.updateShowSeatStatus(
+                lockSeatsRequest.showId(),
+                lockSeatsRequest.seatIds(),
+                ShowSeatStatus.LOCKED
+       );
+
+       if(updatedCount != lockSeatsRequest.seatIds().size()) {
+           log.warn("Failed to lock all seats. Requested: {}, Locked : {}, Rolling Back",
+                   lockSeatsRequest.seatIds().size(),
+                   updatedCount
+           );
+           // TODO - throws SeatsUnavailableException("Some Seats are not longer avaialble, Please try again."); 409 Conflict
+            throw new RuntimeException("Failed to lock seats");
+       }
+
+       log.info("Successfully locked {} seats for show id: {}", updatedCount, lockSeatsRequest.showId());
+       return getSeatByShowAndSeatIds(lockSeatsRequest.showId(), lockSeatsRequest.seatIds());
     }
 
     @Transactional
     public List<ValidSeatResponse> bookSeatsByShowAndSeatIds(BookSeatsRequest bookSeatsRequest) {
-        // TODO : Implement
-        return null;
+        log.info("Booking seats for show id: {} and seat ids: {}",
+                bookSeatsRequest.showId(),
+                bookSeatsRequest.seatIds()
+        );
+
+        int updatedCount = showSeatRepository.updateShowSeatStatus(
+                bookSeatsRequest.showId(),
+                bookSeatsRequest.seatIds(),
+                ShowSeatStatus.BOOKED
+        );
+
+        if(updatedCount != bookSeatsRequest.seatIds().size()) {
+            log.warn("Failed to book all seats. Requested: {}, Booked : {}, Rolling Back",
+                    bookSeatsRequest.seatIds().size(),
+                    updatedCount
+            );
+            throw new RuntimeException("Failed to book seats");
+        }
+
+        log.info("Successfully booked {} seats for show id: {}", updatedCount, bookSeatsRequest.showId());
+        return getSeatByShowAndSeatIds(bookSeatsRequest.showId(), bookSeatsRequest.seatIds());
     }
 
     @Transactional
     public List<ValidSeatResponse> releaseSeatsByShowAndSeatIds(ReleaseSeatsRequest releaseSeatsRequest) {
-        // TODO : Implement
-        return null;
+        log.info("Releasing seats for show id: {} and seat ids: {}",
+                releaseSeatsRequest.showId(),
+                releaseSeatsRequest.showSeatIds()
+        );
+
+        int updatedCount = showSeatRepository.updateShowSeatStatus(
+                releaseSeatsRequest.showId(),
+                releaseSeatsRequest.showSeatIds(),
+                ShowSeatStatus.AVAILABLE
+        );
+
+        if(updatedCount != releaseSeatsRequest.showSeatIds().size()) {
+            log.warn("Failed to release all seats. Requested: {}, Released : {}, Rolling Back",
+                    releaseSeatsRequest.showSeatIds().size(),
+                    updatedCount
+            );
+            throw new RuntimeException("Failed to release seats");
+        }
+
+        log.info("Successfully released {} seats for show id: {}", updatedCount, releaseSeatsRequest.showId());
+        return getSeatByShowAndSeatIds(releaseSeatsRequest.showId(), releaseSeatsRequest.showSeatIds());
     }
 }
