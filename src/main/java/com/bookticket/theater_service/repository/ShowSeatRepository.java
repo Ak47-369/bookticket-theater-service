@@ -27,6 +27,12 @@ public interface ShowSeatRepository extends JpaRepository<ShowSeat,Long> {
                                               @Param("showSeatIds") List<Long> showSeatIds
     );
 
+    @Query("SELECT ss FROM ShowSeat ss WHERE ss.show.id = :showId AND ss.id IN :showSeatIds AND ss.status = :status")
+    List<ShowSeat> findByShowIdAndShowSeatIdsAndStatus(@Param("showId") Long showId,
+                                                       @Param("showSeatIds") List<Long> showSeatIds,
+                                                       @Param("status") ShowSeatStatus status
+    );
+
     @Modifying(clearAutomatically = true)
     @Query("UPDATE ShowSeat ss SET ss.status = :status " +
             "WHERE ss.show.id = :showId " +

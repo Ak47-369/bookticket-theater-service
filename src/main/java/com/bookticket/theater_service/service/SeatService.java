@@ -43,23 +43,18 @@ public class SeatService {
                 .toList();
     }
 
+    public List<ValidSeatResponse> getAvailableSeats(Long showId, List<Long> seatIds) {
+        List<ShowSeat> validSeats = showSeatRepository.findByShowIdAndShowSeatIdsAndStatus(showId, seatIds, ShowSeatStatus.AVAILABLE);
+        return buildValidSeatResponse(validSeats);
+    }
+
     public List<ValidSeatResponse> getSeatByShowAndSeatIds(Long showId, List<Long> seatIds) {
-        log.info("Verifying seats for show id: {} and seat ids: {}",showId, seatIds);
         List<ShowSeat>showSeats = showSeatRepository.findByShowIdAndShowSeatIds(showId, seatIds);
         log.info("Found {} seats", showSeats.size());
         if(showSeats.size() != seatIds.size()) {
             log.warn("Requested {} seats, but found only {} seats", seatIds.size(), showSeats.size());
         }
-        return showSeats.stream()
-                .map(showSeat -> new ValidSeatResponse(
-                        showSeat.getId(),
-                        showSeat.getStatus().name(),
-                        showSeat.getSeat().getSeatNumber(),
-                        showSeat.getSeat().getSeatType().name(),
-                        showSeat.getPrice()
-                        )
-                )
-                .toList();
+        return buildValidSeatResponse(showSeats);
     }
 
     @Transactional
@@ -266,5 +261,16 @@ public class SeatService {
 
         log.info("Successfully released {} seats for show id: {}", updatedCount, releaseSeatsRequest.showId());
         return getSeatByShowAndSeatIds(releaseSeatsRequest.showId(), releaseSeatsRequest.showSeatIds());
+    }
+
+    private List<ValidSeatResponse> buildValidSeatResponse(List<ShowSeat> showSeats) {
+        return showSeats.stream()
+                .map(showSeat -> new ValidSeatResponse(
+                        showSeat.getId(),
+                        showSeat.getSeat().getSeatNumber(),
+                        showSeat.getSeat().getSeatType().name(),
+                        showSeat.getPrice()
+                ))
+                .toList();
     }
 }

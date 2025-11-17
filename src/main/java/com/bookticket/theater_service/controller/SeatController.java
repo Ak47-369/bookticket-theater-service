@@ -33,7 +33,7 @@ public class SeatController {
 
     @PostMapping("/shows/internal/seats/verify")
     public ResponseEntity<List<ValidSeatResponse>> verifySeats(@Valid @RequestBody VerfiySeatRequest verifySeatRequest) {
-        List<ValidSeatResponse> validSeatResponses = seatService.getSeatByShowAndSeatIds(verifySeatRequest.showId(), verifySeatRequest.seatIds());
+        List<ValidSeatResponse> validSeatResponses = seatService.getAvailableSeats(verifySeatRequest.showId(), verifySeatRequest.seatIds());
         if(validSeatResponses.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
