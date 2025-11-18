@@ -56,7 +56,7 @@ public class ShowController {
     // Service to Service Call
     @GetMapping("/internal/movie-ids")
     public ResponseEntity<List<String>> getMovieIdsByCity(@RequestParam String city) {
-//        return ResponseEntity.ok(List.of("1", "2", "3"));
+        // TODO : Add Cache
         return ResponseEntity.ok(showService.getMovieIdsByCity(city));
     }
 
