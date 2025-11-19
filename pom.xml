@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.bookticket</groupId>
-    <artifactId>user-service</artifactId>
+    <artifactId>theater-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>user-service</name>
-    <description>User service</description>
+    <name>theater-service</name>
+    <description>Theater Service</description>
     <url/>
     <licenses>
         <license/>
