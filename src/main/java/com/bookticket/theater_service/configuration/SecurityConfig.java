@@ -56,6 +56,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET,"/api/v1/shows/**").permitAll()
                         // Actuator and any other authenticated requests
                         .requestMatchers("/actuator/**").permitAll()
+                        .requestMatchers("v3/api-docs/**").permitAll()
                         .anyRequest().authenticated()
                 );
         http.addFilterBefore(headerAuthenticatorFilter(), UsernamePasswordAuthenticationFilter.class);
