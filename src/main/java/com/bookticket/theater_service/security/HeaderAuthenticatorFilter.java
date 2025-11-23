@@ -22,7 +22,7 @@ public class HeaderAuthenticatorFilter  extends OncePerRequestFilter {
             throws ServletException, IOException {
         String id = request.getHeader("X-User-Id");
         String username = request.getHeader("X-User-Name");
-//        String roles = request.getHeader("X-User-Roles");
+        String roles = request.getHeader("X-User-Roles");
 
         if (id != null  && roles != null) {
             List<SimpleGrantedAuthority> authorities = Arrays.stream(roles.split(","))
@@ -35,7 +35,7 @@ public class HeaderAuthenticatorFilter  extends OncePerRequestFilter {
             SecurityContextHolder.getContext().setAuthentication(authentication);
             log.info("Successfully authenticated user {} with roles {}", id, authorities);
         } else {
-            log.warn("HeaderAuthenticatorFilter - Missing headers. X-User-Id: {}, X-User-Roles: {}", id, roles);
+            log.warn("HeaderAuthenticatorFilter - Missing headers. X-User-Id: {}, X-User-Roles: {}, X-User-Name: {}", id, roles, username);
         }
         filterChain.doFilter(request, response);
     }
