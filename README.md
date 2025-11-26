@@ -12,8 +12,8 @@ The **Theater Service** is the operational core of the BookTicket platform, resp
 -   **Seat Inventory:** Tracks the availability of seats for each specific show, which is critical for the booking process.
 
 ## Architecture
-<img width="1305" height="1052" alt="Theater service" src="https://github.com/user-attachments/assets/cef65330-b339-47d5-b728-5cf960b57897" />
 
+<img width="1266" height="1010" alt="Theater Service" src="https://github.com/user-attachments/assets/9b908de1-d5c3-4c25-97c7-a5146fb7c359" />
 
 
 ### How It Works
@@ -33,8 +33,25 @@ The **Theater Service** is the operational core of the BookTicket platform, resp
 
 ## API Endpoints
 
-The service's endpoints are exposed through the API Gateway. Key operations include:
+The service's endpoints are exposed through the API Gateway. They provide comprehensive access to theater, screen, and show information.
 
--   `GET /api/v1/theaters`: Fetches a list of all theaters.
--   `GET /api/v1/theaters/{id}/shows`: Fetches all shows for a specific theater.
--   `GET /api/v1/shows`: Allows searching for shows, for example, by `movieId` and `city`.
+### Theater Endpoints
+-   `POST /api/v1/theaters`: Adds a new theater to the system. (Requires `ADMIN` role).
+-   `GET /api/v1/theaters`: Retrieves a list of all theaters, with optional filtering by `city`.
+-   `GET /api/v1/theaters/{id}`: Fetches detailed information for a single theater by its ID.
+-   `GET /api/v1/theaters/{id}/shows`: Retrieves all shows currently scheduled for a specific theater.
+
+### Screen Endpoints
+-   `POST /api/v1/screens`: Adds a new screen to a specified theater. (Requires `ADMIN` or `THEATER_OWNER` role).
+-   `GET /api/v1/screens/{id}`: Fetches detailed information for a single screen, including its seating arrangement.
+
+### Show Endpoints
+-   `POST /api/v1/shows`: Schedules a new show for a movie on a specific screen. (Requires `ADMIN` or `THEATER_OWNER` role).
+-   `GET /api/v1/shows`: A powerful search endpoint to find shows. Can be filtered by `movieId`, `city`, and `showDate`.
+-   `GET /api/v1/shows/{id}`: Fetches detailed information for a single show, including the availability of all its seats.
+
+### Internal Endpoints
+*(These are intended for service-to-service communication and are not exposed on the API Gateway)*
+-   `POST /api/v1/internal/shows/verify-seats`: Used by the `Booking Service` to verify that a list of seats for a show are valid and available before proceeding with a booking.
+-   `POST /api/v1/internal/shows/lock-seats`: Used by the `Booking Service` to mark seats as temporarily locked during the booking process.
+-   `POST /api/v1/internal/shows/book-seats`: Used by the `Booking Service` to permanently mark seats as booked after a successful payment.
